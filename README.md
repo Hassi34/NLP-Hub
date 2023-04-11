@@ -58,6 +58,8 @@ Following are the main contents to follow, you can jump to any section:
 >        - [Docker Container](#docker-container)<br>
 >   -  [Conclusion](#conclusion-)<br>
 
+## Endpoints
+![image](./assets/endpoints.png)
 ## System Design
 ![image](./assets/SystemDesign.png)
 
