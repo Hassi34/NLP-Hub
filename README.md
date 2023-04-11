@@ -70,7 +70,7 @@ Natural Language Processing (NLP) has become an essential technology in various 
 
 This project aims to develop a production-grade system that offers multiple NLP services, leveraging the power of GitHub Actions for continuous integration and continuous deployment (CI/CD), and AWS ECR (Elastic Container Registry) for container image management. The system will be deployed on EC2 self-hosted runners, providing an efficient and scalable solution for delivering high-quality NLP services.
 ### Description<a id='project-description'></a>
-The NLP Hub consists of multiple NLP services, each providing a specific functionality, such as sentiment analysis, named entity recognition, grammer & spell check, and text summarization. The system will be designed to handle a high volume of text data.
+The NLP Hub consists of multiple NLP services, each providing specific functionality, such as sentiment analysis, named entity recognition, grammar & spell check, and text summarization. The system will be designed to handle a high volume of text data.
 
 The system will be containerized using Docker, allowing for easy deployment and scaling. Docker images will be built and pushed to AWS ECR, a fully managed container registry service provided by AWS, which provides a secure and scalable way to store and manage Docker container images. AWS ECR will be used for image management and versioning, enabling seamless deployment of new versions of the containers.
 
