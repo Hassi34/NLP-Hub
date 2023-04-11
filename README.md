@@ -63,7 +63,7 @@ Following are the main contents to follow, you can jump to any section:
 ## System Design
 ![image](./assets/SystemDesign.png)
 
-## CICD on Circleci
+## CICD
 ![image](./assets/cicd.png)
 ## Introduction<a id='project-intro'></a>
 Natural Language Processing (NLP) has become an essential technology in various industries, including healthcare, finance, marketing, and customer service. NLP techniques enable computers to understand, analyze, and generate human language, making it possible to automate tasks such as sentiment analysis, named entity recognition, grammer & spell check, and text summarization.
