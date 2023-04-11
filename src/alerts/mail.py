@@ -17,7 +17,7 @@ class Email:
     def send_sanity_check_alert(self):
         try:
             msg = EmailMessage()
-            msg["Subject"] = "Model Training and Deployment finished"
+            msg["Subject"] = "NLP-Hub CICD Alert"
             msg["From"] = self.sender
             msg["To"] = self.recipients
 
@@ -25,7 +25,7 @@ class Email:
 
   Hi Hasanain,
 
-  A new version of COVID-19 chest X-ray image classifier has been deployed to GCP App Engine, awaiting sanity check... 
+  Docker Image has been built successfully, proceeding to deploy...
 
   Note: Do not reply to this email as this is a system-generated alert.
   

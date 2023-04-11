@@ -110,6 +110,9 @@ jobs:
           echo "$DOCKERHUB_ACCESS_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
           docker build -t $IMAGE_NAME_DOCKER_HUB:$IMAGE_TAG .
           docker push $IMAGE_NAME_DOCKER_HUB:$IMAGE_TAG
+          echo "Sanity Check Alert to User"
+          chmod +x ./scripts/sanity_check_alert.sh
+          ./scripts/sanity_check_alert.sh
                    
   Continuous-Deployment:
     needs: build-and-push-image
@@ -133,10 +136,6 @@ jobs:
       - name: Pull latest images
         run: |
          docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
-         
-      # - name: Stop and remove  container if running
-      #   run: |
-      #    docker ps -q --filter "name=mltest" | grep -q . && docker stop mltest && docker rm -fv mltest
        
       - name: Run Docker Image to serve users
         run: |
