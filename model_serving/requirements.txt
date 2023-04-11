@@ -1,8 +1,0 @@
-fastapi==0.95.0
-uvicorn 
-transformers
-SpeechRecognition>=3.10.0
-gingerit>=0.9.0
-gtts
-PyYAML
--e .
