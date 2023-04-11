@@ -10,7 +10,7 @@
 </p>
 <p align="center">
 <a href="https://github.com/Hassi34/NLP-Hub">
-    <img src="https://readme-typing-svg.demolab.com?font=Georgia&size=18&duration=2000&pause=1500&multiline=False&color=10D736FF&center=true&width=500&height=40&lines=AI+%7C+NLP+%7C+PyTorch+%7C+MLOps;Python+%7C+3.7+%7C+3.8+%7C+3.9+%7C+3.10;Online Prediction+%7C REST API+%7C+CICD+%7C FAST API;S3 Bucket+%7C Amazon EC2+%7C Self Hosted Runner;" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=Georgia&size=18&duration=2000&pause=1500&multiline=False&color=10D736FF&center=true&width=500&height=40&lines=AI+%7C+NLP+%7C+PyTorch+%7C+MLOps;Python+%7C+3.7+%7C+3.8+%7C+3.9+%7C+3.10;Online Prediction+%7C REST API+%7C+CICD+%7C+FAST API+;S3 Bucket+%7C Amazon EC2+%7C+Self Hosted Runner;" alt="Typing SVG" />
 </a>
 </p>
 
@@ -19,7 +19,7 @@
         <img alt="License" src="https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-g.svg">
     </a>
     <a href="https://github.com/Hassi34/NLP-Hub">
-        <img alt="Build" src="https://circleci.com/gh/Hassi34/NLP-Hub.svg?style=svg&circle-token=d85dfbfefbcb696a26e157aff116945f84f904d3">
+        <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/hassi34/NLP-Hub/main.yaml">
     </a>
     <a href="https://github.com/Hassi34/NLP-Hub">
         <img alt="Last Commit" src="https://img.shields.io/github/last-commit/hassi34/NLP-Hub/main?color=g">
@@ -45,7 +45,7 @@ Following are the main contents to follow, you can jump to any section:
 
 >   -  [Introduction](#project-intro)<br>
 >   -  [Description](#project-description)<br>
->   -  [Project Notebooks](https://github.com/Hassi34/BERT-NER-Fine-tuning/tree/notebooks)
+>   -  [Project Notebooks](https://github.com/Hassi34/NLP-Hub/tree/notebooks)
 >   -  [Tech Stack](#tech-stack)<br>
 >   -  [Infrastructure](#infra-)<br>
 >   -  [Run Locally](#run-local)<br>
