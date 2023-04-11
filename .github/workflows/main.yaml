@@ -142,7 +142,7 @@ jobs:
 
       - name: Stop and remove  container if running
         run: |
-         docker ps -q --filter "name=${{secrets.ECR_REPOSITORY_NAME}}" | grep -q . && docker stop ${{secrets.ECR_REPOSITORY_NAME}} && docker rm -fv ${{secrets.ECR_REPOSITORY_NAME}}
+         docker ps -q --filter name=${{secrets.ECR_REPOSITORY_NAME}} | grep -q . && docker stop ${{secrets.ECR_REPOSITORY_NAME}} && docker rm -fv ${{secrets.ECR_REPOSITORY_NAME}}
       - name: Run Docker Image to serve users
         run: |
          docker run -d -p 80:8080 --ipc="host" --name=${{secrets.ECR_REPOSITORY_NAME}} -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
