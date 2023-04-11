@@ -10,7 +10,7 @@
 </p>
 <p align="center">
 <a href="https://github.com/Hassi34/NLP-Hub">
-    <img src="https://readme-typing-svg.demolab.com?font=Georgia&size=18&duration=2000&pause=1500&multiline=False&color=10D736FF&center=true&width=500&height=40&lines=AI+%7C+NLP+%7C+PyTorch+%7C+MLOps;Python+%7C+3.7+%7C+3.8+%7C+3.9+%7C+3.10;Online Prediction+%7C+REST API+%7C+CICD+%7C+FAST API;S3 Bucket+%7C+Amazon EC2+%7C+Self Hosted Runner;" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=Georgia&size=18&duration=2000&pause=1500&multiline=False&color=10D736FF&center=true&width=500&height=40&lines=AI+%7C+NLP+%7C+PyTorch+%7C+MLOps;Python+%7C+3.7+%7C+3.8+%7C+3.9+%7C+3.10;Online+Prediction+%7C+REST+API+%7C+CICD+%7C+FAST+API;S3+Bucket+%7C+Amazon+EC2+%7C+Self+Hosted+Runner;" alt="Typing SVG" />
 </a>
 </p>
 
