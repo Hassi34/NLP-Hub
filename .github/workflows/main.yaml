@@ -1,0 +1,146 @@
+name: workflow
+
+on:
+  push:
+    branches:
+      - main
+    # paths-ignore:
+    #   - 'README.md'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  integration:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: install-dependencies
+        run: |
+          sudo apt install software-properties-common
+          sudo apt update
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt install python3.10
+          sudo apt install python3-pip
+          pip3 install flake8
+
+      - name: lint-with-flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  prod-env-setup:
+    name: Environment Setup
+    needs: integration
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.10" ]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setting up
+        env:
+          AWS_ACCESS_KEY_ID : ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY : ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        run: |
+          # echo [$(date)]: ">>>>>>>>>>>>>>>>>> PRODUCTION ENVIRONMENT SETUP >>>>>>>>>>>>>>>>>>"
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Install Requirements >>>>>>>>>>>>>>>>>>"
+          pip install -r requirements.txt
+          pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Project Folder Structure >>>>>>>>>>>>>>>>>>"
+          python template.py
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Download data from Source >>>>>>>>>>>>>>>>>>"
+          python src/download_artifacts.py --config=configs/config.yaml
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Model Validation >>>>>>>>>>>>>>>>>>"
+          python src/validate_ner_artifacts.py --config=configs/config.yaml
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Copy NER blessed model to serving >>>>>>>>>>>>>>>>>>"
+          cp -r artifacts/ner_model model_serving/src/production_models/
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Copy Config to serving >>>>>>>>>>>>>>>>>>"
+          cp configs/config.yaml model_serving/src/configs/config.yaml
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> Copy Common Utils to serving >>>>>>>>>>>>>>>>>>"
+          cp src/utils/common.py model_serving/src/utils/common.py
+          echo [$(date)]: ">>>>>>>>>>>>>>>>>> TRAINING COMPLETED >>>>>>>>>>>>>>>>>>"
+
+  build-and-push-image:
+    name: Continuous Delivery
+    needs: prod-env-setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq unzip
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR and DockerHub
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          IMAGE_NAME_DOCKER_HUB: ${{ secrets.IMAGE_NAME_DOCKER_HUB }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+          IMAGE_TAG: latest
+        run: |
+          echo "Image to ECR"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "Image to DokerHub"
+          echo "$DOCKERHUB_ACCESS_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker build -t $IMAGE_NAME_DOCKER_HUB:$IMAGE_TAG .
+          docker push $IMAGE_NAME_DOCKER_HUB:$IMAGE_TAG
+                   
+  Continuous-Deployment:
+    needs: build-and-push-image
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      
+      - name: Pull latest images
+        run: |
+         docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+         
+      # - name: Stop and remove  container if running
+      #   run: |
+      #    docker ps -q --filter "name=mltest" | grep -q . && docker stop mltest && docker rm -fv mltest
+       
+      - name: Run Docker Image to serve users
+        run: |
+         docker run -d -p 80:8080 --ipc="host" --name=${{secrets.ECR_REPOSITORY_NAME}} -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+      - name: Clean previous images and containers
+        run: |
+         docker system prune -f

@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    container_name: nlp-hub
+    command: python src/main.py
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/nlp_hub
